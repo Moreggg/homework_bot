@@ -10,3 +10,9 @@ class MissedTokensError(Exception):
     """Исключение выбрасывается при отсутствии любой переменной окружения."""
 
     pass
+
+
+class EmptyResponseFromAPI(Exception):
+    """Исключение выбрасывается, когда в ответе от API нет ожидаемых данных."""
+
+    pass
