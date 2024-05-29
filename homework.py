@@ -50,16 +50,17 @@ def check_tokens():
         (TELEGRAM_TOKEN, 'TELEGRAM_TOKEN'),
         (TELEGRAM_CHAT_ID, 'TELEGRAM_CHAT_ID')
     )
-    error_message = 'Отсутствуют обязательные переменные окружения: '
+    error_message = 'Отсутствует обязательная переменная окружения: '
     missed_tokens = []
     for var, key in ENV_VARS_KEYS:
-        if var is None:
+        if not var:
             logger.critical(
                 error_message + key
             )
             missed_tokens.append(key)
     if missed_tokens:
         logger.critical('Программа принудительно остановлена')
+        error_message = 'Отсутствуют обязательные переменные окружения: '
         raise exceptions.MissedTokensError(
             error_message + ', '.join(missed_tokens)
         )
@@ -139,7 +140,7 @@ def main():
     """Основная логика работы бота."""
     check_tokens()
     bot = TeleBot(token=TELEGRAM_TOKEN)
-    timestamp = 0
+    timestamp = int(time.time())
 
     old_status = ''
 
@@ -153,7 +154,7 @@ def main():
             message = parse_status(homeworks[0])
             if message != old_status and send_message(bot, message):
                 old_status = message
-                timestamp = response.get('current_date', time.time())
+                timestamp = response.get('current_date', timestamp)
         except Exception as error:
             message_error = f'Произошел сбой: {error}'
             logger.error(message_error)
